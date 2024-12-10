@@ -984,6 +984,33 @@ export default class PKPass extends Bundle {
 	}
 
 	/**
+	 * Allows setting a Expire date in which the OS
+	 * should show this pass.
+	 * The date and time the pass expires. The value must be a complete date that includes hours and minutes, and may optionally include seconds.
+	 * Pass `null` to remove expire date from this pass.
+	 *
+	 * @param {Date | null} date
+	 * @throws if pass is frozen due to previous export
+	 */
+
+	public setExpirationDate(date: Date | null): void {
+		Utils.assertUnfrozen(this);
+
+		if (date === null) {
+			delete this[propsSymbol]["expirationDate"];
+			return;
+		}
+
+		try {
+			this[propsSymbol]["expirationDate"] = Utils.processDate(date);
+		} catch (err) {
+			throw new TypeError(
+				Messages.format(Messages.DATE.INVALID, "expirationDate", date),
+			);
+		}
+	}
+
+	/**
 	 * Allows to specify some barcodes formats.
 	 * As per the current specifications, only the first
 	 * will be shown to the user, without any possibility
